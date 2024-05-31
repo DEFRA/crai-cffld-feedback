@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  cffld-feedback
+
+Parameters:
+  UploadedFeedbackBucketName:
+    Type: String
+    Description: "REQUIRED: Bucket containing uploaded raw feedback data"
+  FeedbackTriageQueueName:
+    Type: String
+    Description: "REQUIRED: Queue for feedback triage"
+
+Resources:
+  IngestFeedbackXlsx:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/IngestFeedbackXlsx/ingest-xlsx.handler
+      Runtime: nodejs20.x
+      Timeout: 60
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref UploadedFeedbackBucketName
+        - SQSSendMessagePolicy:
+            QueueName: !Ref FeedbackTriageQueueName
+      Events:
+        S3NewObjectEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref UploadedFeedbackBucket
+            Events: s3:ObjectCreated:Put
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: .xlsx
+      Environment:
+        Variables:
+          TRIAGE_QUEUE_URL: !Ref FeedbackTriageQueue
+
+  TriageFeedback:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/TriageFeedback/triage-feedback.handler
+      Runtime: nodejs20.x
+      Timeout: 60
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Sid: InvokeModel1
+            Action:
+              - 'bedrock:InvokeModel'
+            Resource:
+              - 'arn:aws:bedrock:eu-central-1::foundation-model/*'
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt FeedbackTriageQueue.Arn
+            BatchSize: 10
+      Environment:
+        Variables:
+          TRIAGE_QUEUE_URL: !Ref FeedbackTriageQueue
+
+  LambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt IngestFeedbackXlsx.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: 's3.amazonaws.com'
+      SourceAccount: !Sub ${AWS::AccountId}
+      SourceArn: !GetAtt UploadedFeedbackBucket.Arn
+
+  LambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt TriageFeedback.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: 'sqs.amazonaws.com'
+      SourceAccount: !Sub ${AWS::AccountId}
+      SourceArn: !GetAtt FeedbackTriageQueue.Arn
+
+  UploadedFeedbackBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref UploadedFeedbackBucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: true
+      VersioningConfiguration:
+        Status: Enabled
+    
+  FeedbackTriageQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref FeedbackTriageQueueName
