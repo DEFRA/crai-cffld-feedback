@@ -10,6 +10,9 @@ Parameters:
   FeedbackTriageQueueName:
     Type: String
     Description: "REQUIRED: Queue for feedback triage"
+  BedrockModelId:
+    Type: String
+    Description: "REQUIRED: Id for model within Bedrock service"
 
 Resources:
   IngestFeedbackXlsx:
@@ -61,6 +64,7 @@ Resources:
       Environment:
         Variables:
           TRIAGE_QUEUE_URL: !Ref FeedbackTriageQueue
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
 
   LambdaInvokePermission:
     Type: 'AWS::Lambda::Permission'
@@ -94,3 +98,4 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Ref FeedbackTriageQueueName
+      VisibilityTimeout: 120
