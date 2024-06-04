@@ -15,15 +15,18 @@ const processFeedback = async (data) => {
 const generateTriageData = async (data) => {
   try {
     const chain = ChatPromptTemplate.fromTemplate(triage)
-      .pipe(bedrock)
+      .pipe(bedrock.llm)
       .pipe(new JsonOutputParser())
     
     const res = await chain
       .invoke({ feedback: JSON.stringify(data) })
+
+    const embedding = await bedrock.embeddings.embedQuery(data.comments)
     
     return {
       ...data,
-      ...res
+      ...res,
+      embedding
     }
   } catch (err) {
     console.error(`Error invoking Bedrock: ${err}`)

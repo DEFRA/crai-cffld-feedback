@@ -19,6 +19,9 @@ Parameters:
   PostgresDbName:
     Type: String
     Description: "REQUIRED: Database name for postgres"
+  BedrockEmbeddingModelId:
+    Type: String
+    Description: "REQUIRED: Id for embedding model in bedrock"
 
 Resources:
   IngestFeedbackXlsx:
@@ -93,6 +96,7 @@ Resources:
           BEDROCK_MODEL_ID: !Ref BedrockModelId
           POSTGRES_SECRET_ID: !Ref PostgresSecretId
           POSTGRES_DB: !Ref PostgresDbName
+          BEDROCK_EMBEDDING_MODEL_ID: !Ref BedrockEmbeddingModelId
 
   LambdaInvokePermission:
     Type: 'AWS::Lambda::Permission'
