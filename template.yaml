@@ -13,9 +13,6 @@ Parameters:
   BedrockModelId:
     Type: String
     Description: "REQUIRED: Id for model within Bedrock service"
-  PostgresSecretId:
-    Type: String
-    Description: "REQUIRED: Id for secret containing postgres config"
   PostgresDbName:
     Type: String
     Description: "REQUIRED: Database name for postgres"
@@ -83,7 +80,7 @@ Resources:
             Action:
               - secretsmanager:GetSecretValue
             Resource:
-              - !Ref PostgresSecretId
+              - '{{resolve:ssm:/cffld-feedback/postgres-secret-arn}}'
       Events:
         SQSEvent:
           Type: SQS
@@ -94,7 +91,7 @@ Resources:
         Variables:
           TRIAGE_QUEUE_URL: !Ref FeedbackTriageQueue
           BEDROCK_MODEL_ID: !Ref BedrockModelId
-          POSTGRES_SECRET_ID: !Ref PostgresSecretId
+          POSTGRES_SECRET_ID: '{{resolve:ssm:/cffld-feedback/postgres-secret-arn}}'
           POSTGRES_DB: !Ref PostgresDbName
           BEDROCK_EMBEDDING_MODEL_ID: !Ref BedrockEmbeddingModelId
 
