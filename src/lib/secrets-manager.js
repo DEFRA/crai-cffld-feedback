@@ -8,6 +8,10 @@ const getSecret = async (secretId, json = false) => {
 
   try {
     const { SecretString } = await secretsManager.send(params)
+
+    if (!SecretString) {
+      throw new Error('Secret not found')
+    }
     
     if (json) {
       return JSON.parse(SecretString)
@@ -16,6 +20,7 @@ const getSecret = async (secretId, json = false) => {
     return SecretString
   } catch (err) {
     console.error(err)
+    
     throw err
   }
 }

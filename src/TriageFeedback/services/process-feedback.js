@@ -6,8 +6,9 @@ const { addFeedback } = require('../repos/feedback')
 
 const processFeedback = async (data) => {
   const triaged = await generateTriageData(data)
-  
+
   await addFeedback(triaged)
+
   return triaged
 }
 

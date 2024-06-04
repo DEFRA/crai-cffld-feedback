@@ -1,5 +1,5 @@
 
-const { deleteMessage } = require('../lib/sqs')
+const { deleteMessage, sendMessage } = require('../lib/sqs')
 const { processFeedback } = require('./services/process-feedback')
 
 const handler = async (event, context) => {
@@ -10,10 +10,15 @@ const handler = async (event, context) => {
 
     console.info(`Triaging feedback: ${JSON.stringify(data)}`)
 
-    const triaged = await processFeedback(data)
-    console.info(triaged)
-    
-    await deleteMessage(process.env.TRIAGE_QUEUE_URL, receiptHandle)
+    try {
+      const triaged = await processFeedback(data)
+      console.info(triaged)
+      await deleteMessage(process.env.TRIAGE_QUEUE_URL, receiptHandle)
+    } catch (err) {
+      console.error(`Error processing feedback: ${err}`)
+
+      await sendMessage(`${process.env.TRIAGE_QUEUE_URL}-dlq`, data)
+    }
   }
 
   return console.info('Feedback batch processed successfully')
