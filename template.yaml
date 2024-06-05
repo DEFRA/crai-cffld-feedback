@@ -13,6 +13,12 @@ Parameters:
   BedrockModelId:
     Type: String
     Description: "REQUIRED: Id for model within Bedrock service"
+  PostgresDbName:
+    Type: String
+    Description: "REQUIRED: Database name for postgres"
+  BedrockEmbeddingModelId:
+    Type: String
+    Description: "REQUIRED: Id for embedding model in bedrock"
 
 Resources:
   IngestFeedbackXlsx:
@@ -21,6 +27,12 @@ Resources:
       Handler: src/IngestFeedbackXlsx/ingest-xlsx.handler
       Runtime: nodejs20.x
       Timeout: 60
+      VpcConfig:
+        SecurityGroupIds:
+          - '{{resolve:ssm:/cffld-feedback/sg/default}}'
+        SubnetIds:
+          - '{{resolve:ssm:/cffld-feedback/subnet/private/1}}'
+          - '{{resolve:ssm:/cffld-feedback/subnet/private/2}}'
       Policies:
         - S3ReadPolicy:
             BucketName: !Ref UploadedFeedbackBucketName
@@ -47,7 +59,15 @@ Resources:
       Handler: src/TriageFeedback/triage-feedback.handler
       Runtime: nodejs20.x
       Timeout: 60
+      VpcConfig:
+        SecurityGroupIds:
+          - '{{resolve:ssm:/cffld-feedback/sg/default}}'
+        SubnetIds:
+          - '{{resolve:ssm:/cffld-feedback/subnet/private/1}}'
+          - '{{resolve:ssm:/cffld-feedback/subnet/private/2}}'
       Policies:
+        - SQSSendMessagePolicy:
+            QueueName: !Sub "${FeedbackTriageQueueName}-dlq"
         - Statement:
           - Effect: Allow
             Sid: InvokeModel1
@@ -55,6 +75,12 @@ Resources:
               - 'bedrock:InvokeModel'
             Resource:
               - 'arn:aws:bedrock:eu-central-1::foundation-model/*'
+        - Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - '{{resolve:ssm:/cffld-feedback/postgres-secret-arn}}'
       Events:
         SQSEvent:
           Type: SQS
@@ -65,6 +91,9 @@ Resources:
         Variables:
           TRIAGE_QUEUE_URL: !Ref FeedbackTriageQueue
           BEDROCK_MODEL_ID: !Ref BedrockModelId
+          POSTGRES_SECRET_ID: '{{resolve:ssm:/cffld-feedback/postgres-secret-arn}}'
+          POSTGRES_DB: !Ref PostgresDbName
+          BEDROCK_EMBEDDING_MODEL_ID: !Ref BedrockEmbeddingModelId
 
   LambdaInvokePermission:
     Type: 'AWS::Lambda::Permission'
@@ -99,3 +128,13 @@ Resources:
     Properties:
       QueueName: !Ref FeedbackTriageQueueName
       VisibilityTimeout: 120
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt FeedbackTriageDeadLetterQueue.Arn
+        maxReceiveCount: 10
+
+  FeedbackTriageDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${FeedbackTriageQueueName}-dlq"
+      VisibilityTimeout: 120
+
