@@ -1,11 +1,12 @@
-
 const { deleteMessage, sendMessage } = require('../lib/sqs')
 const { processFeedback } = require('./services/process-feedback')
 
 const handler = async (event, context) => {
   console.info(`Received event: ${JSON.stringify(event)}`)
 
-  for ({ body, receiptHandle } of event.Records) {
+  for (const record of event.Records) {
+    const { body, receiptHandle } = record
+
     const data = JSON.parse(body)
 
     console.info(`Triaging feedback: ${JSON.stringify(data)}`)

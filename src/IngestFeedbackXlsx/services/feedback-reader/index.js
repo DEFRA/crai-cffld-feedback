@@ -6,7 +6,7 @@ const { addFeedbackRow } = require('../../repos/feedback')
 const processFeedback = async (id, buffer) => {
   try {
     const { rows, errors } = await readXlsxFile(buffer, { schema })
-    
+
     if (errors.length) {
       console.error('Schema validation errors: ', errors)
       throw new Error('Schema validation failed')
@@ -22,8 +22,6 @@ const processFeedback = async (id, buffer) => {
     await addFeedbackRow(feedbackMetadata)
 
     return redactedRows
-
-    return
   } catch (err) {
     console.error('Error processing feedback: ', err)
     throw err

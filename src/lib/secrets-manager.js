@@ -1,5 +1,5 @@
-const { GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager")
-const { secretsManager } = require("../clients")
+const { GetSecretValueCommand } = require('@aws-sdk/client-secrets-manager')
+const { secretsManager } = require('../clients')
 
 const getSecret = async (secretId, json = false) => {
   const params = new GetSecretValueCommand({
@@ -12,7 +12,7 @@ const getSecret = async (secretId, json = false) => {
     if (!SecretString) {
       throw new Error('Secret not found')
     }
-    
+
     if (json) {
       return JSON.parse(SecretString)
     }
@@ -20,7 +20,7 @@ const getSecret = async (secretId, json = false) => {
     return SecretString
   } catch (err) {
     console.error(err)
-    
+
     throw err
   }
 }

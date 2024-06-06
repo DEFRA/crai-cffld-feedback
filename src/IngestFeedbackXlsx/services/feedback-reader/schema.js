@@ -6,7 +6,7 @@ const schema = {
     required: true,
     type: String
   },
-  'Source': {
+  Source: {
     prop: 'source',
     required: true,
     type: String
@@ -24,12 +24,12 @@ const schema = {
       return date
     }
   },
-  'Browser': {
+  Browser: {
     prop: 'browser',
     required: true,
     type: String
   },
-  'Version': {
+  Version: {
     prop: 'version',
     required: true,
     type: String
@@ -44,7 +44,7 @@ const schema = {
     required: true,
     type: String
   },
-  'Rating': {
+  Rating: {
     prop: 'rating',
     required: true,
     type: String
@@ -59,11 +59,11 @@ const schema = {
     required: true,
     type: String
   },
-  'WebchatID': {
+  WebchatID: {
     prop: 'webchat_id',
     type: String
   },
-  'Duration': {
+  Duration: {
     prop: 'duration',
     required: true,
     type: Number
@@ -72,7 +72,7 @@ const schema = {
     prop: 'lat_long',
     type: String
   },
-  'Comments': {
+  Comments: {
     prop: 'comments',
     required: true,
     type: String
