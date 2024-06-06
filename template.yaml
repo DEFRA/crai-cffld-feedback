@@ -34,6 +34,12 @@ Resources:
           - '{{resolve:ssm:/cffld-feedback/subnet/private/1}}'
           - '{{resolve:ssm:/cffld-feedback/subnet/private/2}}'
       Policies:
+        - Statement:
+            Sid: "comprehend"
+            Effect: Allow
+            Action:
+              - comprehend:*
+            Resource: "*"
         - S3ReadPolicy:
             BucketName: !Ref UploadedFeedbackBucketName
         - SQSSendMessagePolicy:
