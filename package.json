@@ -17,6 +17,7 @@
   "private": true,
   "dependencies": {
     "@aws-crypto/sha256-js": "^5.2.0",
+    "@aws-sdk/client-comprehend": "^3.590.0",
     "@aws-sdk/client-dynamodb": "^3.585.0",
     "@aws-sdk/client-s3": "^3.583.0",
     "@aws-sdk/client-secrets-manager": "^3.588.0",

@@ -79,8 +79,7 @@ You should only respond with a valid JSON object that matches the JSON schema de
     }},
     "llm_comments": {{
       "type": "string",
-      "description": "Summarize the feedback and add any short recommendations (if applicable)",
-      "examples": ["Lacks specific details", "Appears to be scam"]
+      "description": "Shortly summarize the feedback and add any short recommendations (if applicable)"
     }},
     "originating_service": {{
       "type": "string",

@@ -8,7 +8,7 @@ const handler = async (event, context) => {
   console.log(`A new file ${object.key} was created in bucket ${bucket.name}`)
 
   const data = await getObjectBuffer(bucket.name, object.key)
-  const rows = await processFeedback(data)
+  const rows = await processFeedback(object.key, data)
   await sendFeedbackRows(rows)
 
   return console.info(`Ingestion of ${bucket.name}/${object.key} complete`)
