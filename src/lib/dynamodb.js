@@ -9,8 +9,6 @@ const addEntity = async (table, item) => {
     }
   })
 
-  console.log(`Adding feedback (${item.qualtrics_id.S})`)
-
   try {
     await dynamodb.send(params)
   } catch (err) {

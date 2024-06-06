@@ -19,6 +19,9 @@ Parameters:
   BedrockEmbeddingModelId:
     Type: String
     Description: "REQUIRED: Id for embedding model in bedrock"
+  FeedbackMetadataTableName:
+    Type: String
+    Description: "REQUIRED: Name of the table to store feedback metadata"
 
 Resources:
   IngestFeedbackXlsx:
@@ -42,6 +45,8 @@ Resources:
             Resource: "*"
         - S3ReadPolicy:
             BucketName: !Ref UploadedFeedbackBucketName
+        - DynamoDBWritePolicy:
+            TableName: !Ref FeedbackMetadataTableName
         - SQSSendMessagePolicy:
             QueueName: !Ref FeedbackTriageQueueName
       Events:
@@ -144,3 +149,20 @@ Resources:
       QueueName: !Sub "${FeedbackTriageQueueName}-dlq"
       VisibilityTimeout: 120
 
+  FeedbackMetadataDynamoDbTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref FeedbackMetadataTableName
+      AttributeDefinitions:
+        - AttributeName: Service
+          AttributeType: S
+        - AttributeName: FeedbackId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Service
+          KeyType: HASH
+        - AttributeName: FeedbackId
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5

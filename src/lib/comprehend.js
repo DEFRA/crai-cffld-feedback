@@ -5,6 +5,24 @@ const excludedPiiCategories = [
   'ADDRESS'
 ]
 
+const redactPiiRows = async (rows) => {
+  const redactedRows = []
+  let totalRedacted = 0
+
+  for (const row of rows) {
+    const { redacted, count } = await redactPii(row.comments)
+
+    redactedRows.push({
+      ...row,
+      comments: redacted
+    })
+
+    totalRedacted += count
+  }
+
+  return { redactedRows, totalRedacted }
+}
+
 const redactPii = async (text) => {
   try {
     const params = new DetectPiiEntitiesCommand({
@@ -16,15 +34,19 @@ const redactPii = async (text) => {
 
     let redacted = text
 
+    let count = 0
+
     for (const entity of entities) {
       const { BeginOffset: start, EndOffset: end, Type: type } = entity
 
       if (!excludedPiiCategories.includes(type)) {
         redacted = redacted.substring(0, start) + '*'.repeat(end - start) + redacted.substring(end)
+
+        count += 1
       }
     }
 
-    return redacted
+    return { redacted, count }
   } catch (err) {
     console.error('Error detecting PII entities: ', err)
 
@@ -33,5 +55,6 @@ const redactPii = async (text) => {
 }
 
 module.exports = {
-  redactPii
+  redactPii,
+  redactPiiRows
 }

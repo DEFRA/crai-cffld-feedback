@@ -1,8 +1,9 @@
 const readXlsxFile = require('read-excel-file/node')
 const schema = require('./schema')
-const { redactPii } = require('../../../lib/comprehend')
+const { redactPiiRows } = require('../../../lib/comprehend')
+const { addFeedbackRow } = require('../../repos/feedback')
 
-const processFeedback = async (buffer) => {
+const processFeedback = async (id, buffer) => {
   try {
     const { rows, errors } = await readXlsxFile(buffer, { schema })
     
@@ -11,11 +12,18 @@ const processFeedback = async (buffer) => {
       throw new Error('Schema validation failed')
     }
 
-    for (const row of rows) {
-      row.comments = await redactPii(row.comments)
+    const { redactedRows, totalRedacted } = await redactPiiRows(rows)
+
+    const feedbackMetadata = {
+      feedbackId: id,
+      totalRedacted
     }
 
-    return rows
+    await addFeedbackRow(feedbackMetadata)
+
+    return redactedRows
+
+    return
   } catch (err) {
     console.error('Error processing feedback: ', err)
     throw err
