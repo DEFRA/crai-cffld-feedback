@@ -7,6 +7,7 @@ You are an expert in triaging feedback for a flooding web service.
 Your task is to triage a JSON object containing user feedback.
 
 You should only respond with a valid JSON object that matches the JSON schema described in <response_schema>.
+Any text you generate should be short and concise.
 </instructions>
 
 <feedback_object>
@@ -79,7 +80,7 @@ You should only respond with a valid JSON object that matches the JSON schema de
     }},
     "llm_comments": {{
       "type": "string",
-      "description": "Shortly summarize the feedback and add any short recommendations (if applicable)"
+      "description": "Summary of the feedback and, if applicable, recommended actions."
     }},
     "originating_service": {{
       "type": "string",
@@ -95,9 +96,23 @@ You should only respond with a valid JSON object that matches the JSON schema de
       "type": "string",
       "description": "Summary rating determined from 'Rating' into  Positive,  Negative or No Opinion",
       "enum": ["Positive", "Negative", "No Opinion"]
+    }},
+    "key_points": {{
+      "type": "array",
+      "description": "Key points made in the comment.",
+      "items": {{
+        "type": "string"
+      }},
+      "minItems": 1,
+      "maxItems": 5,
+      "uniqueItems": true
+    }},
+    "urgent": {{
+      "type": "boolean",
+      "description": "Whether or not the comment should be addressed urgently, e.g. if there is someone in immediate danger or a tree blocking the road."
     }}
   }},
-  "required": ["category", "sub_category", "llm_comments", "originating_service", "triaged_service", "rating_summary"]
+  "required": ["category", "sub_category", "llm_comments", "originating_service", "triaged_service", "rating_summary", "key_points", "urgent"]
 }}
 </response_schema>
 
@@ -105,5 +120,5 @@ You should only respond with a valid JSON object that matches the JSON schema de
 `
 
 module.exports = {
-  triage 
+  triage
 }

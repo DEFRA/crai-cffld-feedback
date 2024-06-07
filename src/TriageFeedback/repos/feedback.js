@@ -18,6 +18,7 @@ const addFeedback = async (feedback) => {
 
     const enriched = {
       ...feedback,
+      key_points: JSON.stringify(feedback.key_points),
       embedding: pgvector.toSql(feedback.embedding)
     }
 

@@ -1,4 +1,4 @@
-const { getSecret } = require("../lib/secrets-manager")
+const { getSecret } = require('../lib/secrets-manager')
 
 const getConfig = async () => {
   const secret = await getSecret(process.env.POSTGRES_SECRET_ID, true)
