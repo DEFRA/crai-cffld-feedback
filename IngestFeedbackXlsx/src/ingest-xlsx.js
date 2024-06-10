@@ -1,6 +1,6 @@
 const { processFeedback } = require('./services/feedback-reader')
 const { sendFeedbackRows } = require('./services/feedback-sender')
-const { getObjectBuffer } = require('../lib/s3')
+const { getObjectBuffer } = require('./lib/s3')
 
 const handler = async (event, context) => {
   const { bucket, object } = event.Records[0].s3

@@ -1,0 +1,38 @@
+{
+  "name": "triage-feedback",
+  "description": "AWS Lambda to triage CFFLD feedback",
+  "version": "0.0.1",
+  "jest": {
+    "testMatch": [
+      "**/__tests__/**/*.[jt]s?(x)",
+      "**/?(*.)+(spec|test).[jt]s?(x)",
+      "**/__tests__/**/*.mjs?(x)",
+      "**/?(*.)+(spec|test).mjs?(x)"
+    ],
+    "moduleFileExtensions": [
+      "mjs",
+      "js"
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@aws-crypto/sha256-js": "^5.2.0",
+    "@aws-sdk/client-comprehend": "^3.590.0",
+    "@aws-sdk/client-dynamodb": "^3.585.0",
+    "@aws-sdk/client-s3": "^3.583.0",
+    "@aws-sdk/client-secrets-manager": "^3.588.0",
+    "@aws-sdk/client-sqs": "^3.583.0",
+    "@aws-sdk/credential-provider-node": "^3.583.0",
+    "@aws-sdk/types": "^3.577.0",
+    "@aws-sdk/util-stream-node": "^3.374.0",
+    "@langchain/community": "^0.2.4",
+    "@langchain/core": "^0.2.4",
+    "date-fns": "^3.6.0",
+    "joi": "^17.13.1",
+    "knex": "^3.1.0",
+    "pg": "^8.11.5",
+    "pgvector": "^0.1.8",
+    "read-excel-file": "^5.8.1",
+    "uuid": "^9.0.1"
+  }
+}
