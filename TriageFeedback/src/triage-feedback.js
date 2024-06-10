@@ -1,4 +1,4 @@
-const { deleteMessage, sendMessage } = require('../lib/sqs')
+const { deleteMessage, sendMessage } = require('./lib/sqs')
 const { processFeedback } = require('./services/process-feedback')
 
 const handler = async (event, context) => {

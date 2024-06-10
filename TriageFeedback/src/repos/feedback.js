@@ -1,4 +1,4 @@
-const { getConfig } = require('../../config/db')
+const { getConfig } = require('../config/db')
 const pgvector = require('pgvector/knex')
 
 const knex = require('knex')({

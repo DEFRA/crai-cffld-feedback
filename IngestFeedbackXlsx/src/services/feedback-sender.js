@@ -1,4 +1,4 @@
-const { sendMessageBatch } = require('../../lib/sqs')
+const { sendMessageBatch } = require('../lib/sqs')
 
 const sendFeedbackRows = async (rows) => {
   const batchSize = 10

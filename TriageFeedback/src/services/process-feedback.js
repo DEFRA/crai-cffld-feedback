@@ -1,6 +1,6 @@
 const { JsonOutputParser } = require('@langchain/core/output_parsers')
 const { ChatPromptTemplate } = require('@langchain/core/prompts')
-const { bedrock } = require('../../clients')
+const { bedrock } = require('../clients')
 const { triage } = require('../constants/prompt')
 const { addFeedback } = require('../repos/feedback')
 const { schema } = require('../schemas/triage')

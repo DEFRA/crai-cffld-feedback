@@ -1,4 +1,4 @@
-const { addEntity } = require('../../lib/dynamodb')
+const { addEntity } = require('../lib/dynamodb')
 
 const enrichFeedbackRow = (feedback) => ({
   Service: { S: 'cffld' },

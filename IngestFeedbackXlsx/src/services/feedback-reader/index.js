@@ -1,6 +1,6 @@
 const readXlsxFile = require('read-excel-file/node')
 const schema = require('./schema')
-const { redactPiiRows } = require('../../../lib/comprehend')
+const { redactPiiRows } = require('../../lib/comprehend')
 const { addFeedbackRow } = require('../../repos/feedback')
 
 const processFeedback = async (id, buffer) => {
