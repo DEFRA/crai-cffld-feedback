@@ -117,7 +117,7 @@ Resources:
           Type: Api
           Properties:
             Path: /feedback/query
-            Method: GET
+            Method: POST
       Environment:
         Variables:
           POSTGRES_SECRET_ID: '{{resolve:ssm:/cffld-feedback/postgres-secret-arn}}'
