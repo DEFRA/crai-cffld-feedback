@@ -7,7 +7,6 @@ You are an expert in triaging feedback for a flooding web service.
 Your task is to triage a JSON object containing user feedback.
 
 You should only respond with a valid JSON object that matches the JSON schema described in <response_schema>.
-Any text you generate should be short and concise.
 </instructions>
 
 <feedback_object>
@@ -80,7 +79,7 @@ Any text you generate should be short and concise.
     }},
     "llm_comments": {{
       "type": "string",
-      "description": "Summary of the feedback and, if applicable, recommended actions."
+      "description": "Short, concise summary of the feedback and, if applicable, recommended actions."
     }},
     "originating_service": {{
       "type": "string",
@@ -109,7 +108,7 @@ Any text you generate should be short and concise.
     }},
     "urgent": {{
       "type": "boolean",
-      "description": "Whether or not the comment should be addressed urgently, e.g. if there is someone in immediate danger or a tree blocking the road."
+      "description": "Decide whether the comment needs to be addressed urgently, e.g. a user in immediate danger or the user is unable to access the service."
     }}
   }},
   "required": ["category", "sub_category", "llm_comments", "originating_service", "triaged_service", "rating_summary", "key_points", "urgent"]
@@ -120,5 +119,5 @@ Any text you generate should be short and concise.
 `
 
 module.exports = {
-  triage
+  triage 
 }
