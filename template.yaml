@@ -118,6 +118,10 @@ Resources:
           Properties:
             Path: /feedback/query
             Method: GET
+      Environment:
+        Variables:
+          POSTGRES_SECRET_ID: '{{resolve:ssm:/cffld-feedback/postgres-secret-arn}}'
+          POSTGRES_DB: !Ref PostgresDbName
 
   UploadedFeedbackBucket:
     Type: AWS::S3::Bucket

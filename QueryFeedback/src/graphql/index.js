@@ -1,13 +1,21 @@
 const { graphql } = require('graphql')
 
+const { bedrock } = require('../clients')
 const schema = require('./schema')
 const { getFeedback } = require('../repos/feedback')
 
 const rootValue = {
-  feedback: async () => {
-    const feedback = await getFeedback()
+  feedback: async (args) => {
+    if (args.search) {
+      args.embeddings = await bedrock.embeddings.embedQuery(args.search)
+    }
 
-    return feedback
+    const feedback = await getFeedback(args)
+
+    return feedback.map((f) => ({
+      ...f,
+      date_time: new Date(f.date_time).toISOString()
+    }))
   }
 }
 
