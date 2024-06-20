@@ -5,25 +5,33 @@ const { addFeedbackRow } = require('../../repos/feedback')
 
 const processFeedback = async (id, buffer) => {
   try {
+    await addFeedbackRow({ feedbackId: id, status: 'PROCESSING' })
+
     const { rows, errors } = await readXlsxFile(buffer, { schema })
 
     if (errors.length) {
       console.error('Schema validation errors: ', errors)
+
       throw new Error('Schema validation failed')
     }
 
     const { redactedRows, totalRedacted } = await redactPiiRows(rows)
 
-    const feedbackMetadata = {
+    const metadata = {
       feedbackId: id,
-      totalRedacted
+      totalRedacted,
+      totalFeedback: rows.length,
+      status: 'UPLOADED'
     }
 
-    await addFeedbackRow(feedbackMetadata)
+    await addFeedbackRow(metadata)
 
     return redactedRows
   } catch (err) {
     console.error('Error processing feedback: ', err)
+    
+    await addFeedbackRow({ feedbackId: id, status: 'FAILED' })
+    
     throw err
   }
 }

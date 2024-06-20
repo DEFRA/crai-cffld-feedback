@@ -20,7 +20,7 @@ const saveObject = async (bucket, key, buffer) => {
 const getObjectBuffer = async (bucket, key) => {
   const params = {
     Bucket: bucket,
-    Key: decodeURIComponent(key)
+    Key: key
   }
 
   const getObject = new GetObjectCommand(params)

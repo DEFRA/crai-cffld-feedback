@@ -7,8 +7,10 @@ const handler = async (event, context) => {
 
   console.log(`A new file ${object.key} was created in bucket ${bucket.name}`)
 
-  const data = await getObjectBuffer(bucket.name, object.key)
-  const rows = await processFeedback(object.key, data)
+  const key = decodeURIComponent(object.key)
+
+  const data = await getObjectBuffer(bucket.name, key)
+  const rows = await processFeedback(key.replace('.xlsx', ''), data)
   await sendFeedbackRows(rows)
 
   return console.info(`Ingestion of ${bucket.name}/${object.key} complete`)

@@ -1,10 +1,17 @@
 const { addEntity } = require('../lib/dynamodb')
 
-const enrichFeedbackRow = (feedback) => ({
-  Service: { S: 'cffld' },
-  FeedbackId: { S: feedback.feedbackId },
-  TotalRedacted: { N: `${feedback.totalRedacted}` }
-})
+const enrichFeedbackRow = (feedback) => {
+  const totalRedacted = feedback.totalRedacted || 0
+  const totalFeedback = feedback.totalFeedback || 0
+
+  return {
+    Service: { S: 'cffld' },
+    FeedbackId: { S: feedback.feedbackId },
+    TotalRedacted: { N: `${totalRedacted}` },
+    TotalFeedback: { N: `${totalFeedback}` },
+    Status: { S: feedback.status }
+  }
+}
 
 const addFeedbackRow = async (feedback) => {
   try {
