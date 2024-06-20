@@ -106,23 +106,6 @@ Resources:
             POSTGRES_DB: !Ref PostgresDbName
             BEDROCK_EMBEDDING_MODEL_ID: !Ref BedrockEmbeddingModelId
 
-  QueryFeedback:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: QueryFeedback/src/query-feedback.handler
-      Runtime: nodejs20.x
-      Timeout: 100
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /feedback/query
-            Method: POST
-      Environment:
-        Variables:
-          POSTGRES_SECRET_ID: '{{resolve:ssm:/cffld-feedback/postgres-secret-arn}}'
-          POSTGRES_DB: !Ref PostgresDbName
-
   UploadedFeedbackBucket:
     Type: AWS::S3::Bucket
     Properties:
