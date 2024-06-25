@@ -7,7 +7,7 @@ const node = async (state) => {
   const page = await browser.newPage()
 
   await page.goto(state.feedback.source)
-  const buffer = await page.screenshot({fullPage: true})
+  await page.screenshot({ path: 'screenshot.png', fullPage: true })
 
   // save screenshot
 

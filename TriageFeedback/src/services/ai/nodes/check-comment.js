@@ -1,31 +1,24 @@
 const { ChatPromptTemplate } = require('@langchain/core/prompts')
 const { StringOutputParser } = require('@langchain/core/output_parsers')
 
+const { systemPrompt } = require('../../../constants/screenshot-prompt')
+const { llm } = require('../../../clients/bedrock')
+
 const NAME = 'check_comment'
 
-const systemPrompt = require('../../../constants/screenshot-prompt')
-
 const node = async (state) => {
-//   const { content: input } = state.messages[state.messages.length - 1]
+  const prompt = ChatPromptTemplate.fromMessages([
+    ['system', systemPrompt],
+    ['human', '{comments}']
+  ])
 
-  //   if (state.chat_history.length === 0) {
-  //     return {
-  //       input
-  //     }
+  const chain = prompt
+    .pipe(llm)
+    .pipe(new StringOutputParser())
 
-  //   const prompt = ChatPromptTemplate.fromMessages([
-  //     ['system', systemPrompt],
-  //     ['human', '{input}']
-  //   ])
-
-  //   const chain = prompt
-  //     .pipe(sonnet)
-  //     .pipe(new StringOutputParser())
-
-  //   const res = await chain.invoke({
-  //     chat_history: JSON.stringify(state.chat_history),
-  //     input
-  //   })
+  const res = await chain.invoke({
+    comments: state.feedback.comments
+  })
 
   return {
     check_comment: res

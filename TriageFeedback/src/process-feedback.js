@@ -1,5 +1,5 @@
 const { deleteMessage, sendMessage } = require('./lib/sqs')
-const { triageFeedback } = require('./services/triage-feedback')
+const { executeGraph } = require('./services/ai')
 
 const handler = async (event, context) => {
   console.info(`Received event: ${JSON.stringify(event)}`)
@@ -12,7 +12,7 @@ const handler = async (event, context) => {
     console.info(`Triaging feedback: ${JSON.stringify(data)}`)
 
     try {
-      const triaged = await triageFeedback(data)
+      const triaged = await executeGraph(data)
       console.info(triaged)
       await deleteMessage(process.env.TRIAGE_QUEUE_URL, receiptHandle)
     } catch (err) {
