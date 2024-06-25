@@ -29,9 +29,9 @@ const processFeedback = async (id, buffer) => {
     return redactedRows
   } catch (err) {
     console.error('Error processing feedback: ', err)
-    
+
     await addFeedbackRow({ feedbackId: id, status: 'FAILED' })
-    
+
     throw err
   }
 }

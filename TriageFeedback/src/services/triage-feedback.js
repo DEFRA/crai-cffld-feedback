@@ -1,11 +1,11 @@
 const { JsonOutputParser } = require('@langchain/core/output_parsers')
 const { ChatPromptTemplate } = require('@langchain/core/prompts')
 const { bedrock } = require('../clients')
-const { triage } = require('../constants/prompt')
+const { triagePrompt } = require('../constants/triage-prompt')
 const { addFeedback } = require('../repos/feedback')
 const { schema } = require('../schemas/triage')
 
-const processFeedback = async (data) => {
+const triageFeedback = async (data) => {
   const triaged = await generateTriageData(data)
 
   await addFeedback(triaged)
@@ -15,7 +15,7 @@ const processFeedback = async (data) => {
 
 const generateTriageData = async (data) => {
   try {
-    const chain = ChatPromptTemplate.fromTemplate(triage)
+    const chain = ChatPromptTemplate.fromTemplate(triagePrompt)
       .pipe(bedrock.llm)
       .pipe(new JsonOutputParser())
 
@@ -43,5 +43,5 @@ const generateTriageData = async (data) => {
 }
 
 module.exports = {
-  processFeedback
+  triageFeedback
 }
